@@ -1,11 +1,6 @@
 anymotuino
 ==========
 
-Anymote Arduino Clone
-
-What is it?
------------
-
 __anymotuino__ is an Arduino clone of our __AnyMote__ device (you can follow our KickStarter campaign [here](https://www.kickstarter.com/projects/1635386542/anymote-home-your-phone-the-ultimate-universal-rem)).
 
 It behaves almost exactly as our __AnyMote__ device, although it lacks the optimisations we were able to integrate in our custom board and firmware.
@@ -13,7 +8,7 @@ It behaves almost exactly as our __AnyMote__ device, although it lacks the optim
 __anymotuino__ follows the same protocol as __AnyMote__, so you can safely use it with our AnyMote [iOS](#coming-soon) and [Android](https://play.google.com/store/apps/details?id=com.remotefairy&hl=en) applications.
 
 What hardware do I need to build it? (Bill Of Materials)
---------------------------------------------------------
+========================================================
 
 You can basically use any Arduino board along with a Bluetooth LE 4.0 compatible serial data module and InfraRed LED, but for the purposes of this example, we have chosen to use an Arduino Pro Mini (3.3V version) and an HM-10 BLE board, mainly to keep things nice and compact, while running on 2x AA batteries.
 
@@ -30,7 +25,73 @@ Here's the Bill Of Materials for this project:
 ![](docs/components.jpg)
 
 What software do I need to run it?
-----------------------------------
+==================================
 
 You need Arduino 1.0+ obviously, and you also need Ken Shirriff's [IRRemote library](https://github.com/shirriff/Arduino-IRremote).
+
+I modified the `IRRemote.h` header to make sure we send the codes at 38KHz. Find this line:
+
+```
+#define USECPERTICK 50
+```
+
+and turn it to
+
+```
+#define USECPERTICK 26 // 26 microseconds = 1 second / 38000 Hz, so 26 us per tick
+```
+
+How do I put it all together?
+=============================
+
+Here comes the fun part. Put your DIY glasses on and let's build this thing!
+
+1. Build the core of the device
+-------------------------------
+
+Stick the breadboard to the battery enclosure's back (all breadboards have a sticky double sided tape on their back). If you have a case with a switch on it, make sure you're not pasting the breadboard over it.
+
+Then connect the Arduino Pro Mini on the breadboard as suggested in this photo. Make sure it goes over the length of the breadboard so we have both halves usable for connections.
+
+![Breadboard over battery case and Arduino connected](docs/batt_bread_arduino.jpg)
+
+2. Connect the Power IR breakout
+--------------------------------
+
+The breakout requires VCC and GND connections + the CTL pin. The CTL pin goes to pin 3 of the Arduino Pro Mini (which is a PWM pin, required for fast IR "ticks").
+
+![Power IR Breakout connections](docs/power_ir.jpg)
+
+3. Solder the connections to the HM-10 module
+---------------------------------------------
+
+Normally you would need a [breakout board](https://oshpark.com/shared_projects/aWRbRvyh) for the HM-10 module, but for the purposes of our project, we'll solder the wires directly to the small board as in the photo. 
+
+So, holding the module with the antenna on top, the first 2 pins on the bottom left side are GND and VCC, respectively; the 2 pins on the top left side are RX and TX, respectively. There's another pin you might want to solder since we're here, the status signal, useful for debugging. It's the 3rd pin on the bottom right side (orange wire in the photo).
+
+![HM-10 BLE module soldering](docs/hm10_solder.jpg)
+
+For more info, you can find the full schematics and documentation for the HM-10 [here](http://www.jnhuamao.cn/bluetooth40_en.zip).
+
+4. Wire the HM-10 module to our Arduino Pro Mini
+------------------------------------------------
+
+Wiring it to the arduino is easy as pie once you soldered the wires. The VCC and GND wires go to their respective counterparts on our breakboard, while the RX and TX go to our 8 and 7 pins on the Arduino. In the Arduino sketch, the Serial connection is made to read from pin 8 and write to pin 7 (RX on the BLE goes to TX on the arduino and TX of the BLE to RX of the arduino).
+
+![HM-10 wiring](docs/hm10_arduino_wiring.jpg)
+
+Optionally, connect a LED to the status output of the HM-10 to debug connectivity. Blinking means not connected to a BLE device, solid means connected. The orange wire goes to the input end of the LED, while the GND goes to the arduino's GND.
+
+![HM-10 optional status debug LED](docs/hm10_status_led.jpg)
+
+5. That's it for the hardware
+-----------------------------
+
+I also applied 2 small pieces of double sided tape to hold the BLE module and the IR recorder together with our rudimentary-but-nonetheless-cool __anymotuino__ box:
+
+![Sticky breakout boards](docs/sticky_hm10.jpg)
+
+Final look:
+
+![Final product](docs/anymotuino_final.jpg)
 
