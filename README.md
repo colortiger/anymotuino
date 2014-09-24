@@ -62,7 +62,14 @@ The breakout requires VCC and GND connections + the CTL pin. The CTL pin goes to
 
 ![Power IR Breakout connections](docs/power_ir.jpg)
 
-3. Solder the connections to the HM-10 module
+3. Connect the IR receiver breakout (optional)
+----------------------------------------------
+
+__anymotuino__ knows how to record IR codes as well. So if you bought an IR receiver breakout, you can use it by connecting the VCC and GND pins to their respective counterparts on our Breadboard, and the OUT pin to pin 6 on the Arduino board.
+
+![IR Receiver Breakout connections](docs/ir_receiver.jpg)
+
+4. Solder the connections to the HM-10 module
 ---------------------------------------------
 
 Normally you would need a [breakout board](https://oshpark.com/shared_projects/aWRbRvyh) for the HM-10 module, but for the purposes of our project, we'll solder the wires directly to the small board as in the photo. 
@@ -73,7 +80,7 @@ So, holding the module with the antenna on top, the first 2 pins on the bottom l
 
 For more info, you can find the full schematics and documentation for the HM-10 [here](http://www.jnhuamao.cn/bluetooth40_en.zip).
 
-4. Wire the HM-10 module to our Arduino Pro Mini
+5. Wire the HM-10 module to our Arduino Pro Mini
 ------------------------------------------------
 
 Wiring it to the arduino is easy as pie once you soldered the wires. The VCC and GND wires go to their respective counterparts on our breakboard, while the RX and TX go to our 8 and 7 pins on the Arduino. In the Arduino sketch, the Serial connection is made to read from pin 8 and write to pin 7 (RX on the BLE goes to TX on the arduino and TX of the BLE to RX of the arduino).
@@ -84,7 +91,7 @@ Optionally, connect a LED to the status output of the HM-10 to debug connectivit
 
 ![HM-10 optional status debug LED](docs/hm10_status_led.jpg)
 
-5. That's it for the hardware
+6. That's it for the hardware
 -----------------------------
 
 I also applied 2 small pieces of double sided tape to hold the BLE module and the IR recorder together with our rudimentary-but-nonetheless-cool __anymotuino__ box:
@@ -95,3 +102,7 @@ Final look:
 
 ![Final product](docs/anymotuino_final.jpg)
 
+Installing the Arduino Sketch and usage
+=======================================
+
+`TODO: to be continued`
