@@ -45,6 +45,9 @@
  
 #include <SPI.h>
 #include <boards.h>
+
+#define USECPERTICK 26 // we're defining the microseconds per tick to work with 38KHz codes (the most used frequency) - a tick of 26us = 38KHz
+
 #include <IRremote.h>
 #include <IRremoteInt.h>
 #include <SoftwareSerial.h>

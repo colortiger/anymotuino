@@ -29,18 +29,6 @@ What software do I need to run it?
 
 You need Arduino 1.0+ obviously, and you also need Ken Shirriff's [IRRemote library](https://github.com/shirriff/Arduino-IRremote).
 
-I modified the `IRRemote.h` header to make sure we send the codes at 38KHz. Find this line:
-
-```
-#define USECPERTICK 50
-```
-
-and turn it to
-
-```
-#define USECPERTICK 26 // 26 microseconds = 1 second / 38000 Hz, so 26 us per tick
-```
-
 How do I put it all together?
 =============================
 
@@ -105,4 +93,33 @@ Final look:
 Installing the Arduino Sketch and usage
 =======================================
 
-`TODO: to be continued`
+Sketch Installation And Configuration
+-------------------------------------
+
+You first need to install the [IRRemote](https://github.com/shirriff/Arduino-IRremote) library in your Arduino SDK's libraries folder. 
+
+__Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library __before__ opening the Arduino IDE:
+
+Replace this line:
+
+```
+#define USECPERTICK 50
+```
+
+With this snippet:
+```
+#ifndef USECPERTICK
+#define USECPERTICK 50
+#endif
+```
+
+This allows us to easily change the microsecond per signal tick as we need in our sketch. If you don't need this functionality, you can leave it as is.
+
+Then fire up the Arduino IDE and load the [sketch](anymotuino/anymotuino.ino).
+
+Connect the FTDI programmer to the Arduino Pro Mini board, then connect the FTDI programmer to a USB board on your computer.
+Make sure you select the appropriate board type and serial port (Arduino Pro Mini 3.3V 8MHz ATmega328 and the appropriate Serial Port). Then choose `File > Upload` (or hit Command+U on OS X).
+
+Once it's complete, you're able to use the __anymotuino__ with the SmartRemote/AnyMote iOS or Android application as an external IR blaster.
+
+Enjoy!
