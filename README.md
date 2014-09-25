@@ -98,7 +98,7 @@ Sketch Installation And Configuration
 
 You first need to install the [IRRemote](https://github.com/shirriff/Arduino-IRremote) library in your Arduino SDK's libraries folder. 
 
-__Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library __before__ opening the Arduino IDE:
+__Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library __before__ opening the Arduino IDE:_
 
 Replace this line:
 
@@ -123,3 +123,4 @@ Make sure you select the appropriate board type and serial port (Arduino Pro Min
 Once it's complete, you're able to use the __anymotuino__ with the SmartRemote/AnyMote iOS or Android application as an external IR blaster.
 
 Enjoy!
+
