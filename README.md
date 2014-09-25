@@ -98,7 +98,7 @@ Sketch Installation And Configuration
 
 You first need to install the [IRRemote](https://github.com/shirriff/Arduino-IRremote) library in your Arduino SDK's libraries folder. 
 
-__Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library __before__ opening the Arduino IDE:_
+__Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library before opening the Arduino IDE:_
 
 Replace this line:
 
