@@ -5,7 +5,7 @@ __anymotuino__ is an Arduino clone of our __AnyMote__ device (you can follow our
 
 It behaves almost exactly as our __AnyMote__ device, although it lacks the optimisations we were able to integrate in our custom board and firmware.
 
-__anymotuino__ follows the same protocol as __AnyMote__, so you can safely use it with our AnyMote [iOS](#coming-soon) and [Android](https://play.google.com/store/apps/details?id=com.remotefairy&hl=en) applications.
+__anymotuino__ follows the same protocol as __AnyMote__, so you can safely use it with our AnyMote [iOS (early beta)](https://colortiger.com/iosbeta) and [Android](https://play.google.com/store/apps/details?id=com.remotefairy&hl=en) applications.
 
 What hardware do I need to build it? (Bill Of Materials)
 ========================================================
@@ -33,6 +33,7 @@ How do I put it all together?
 =============================
 
 Here comes the fun part. Put your DIY glasses on and let's build this thing!
+You can also find the Fritzing schematic [here](fritzing/Anymotuino.fzz).
 
 1. Build the core of the device
 -------------------------------
@@ -89,6 +90,8 @@ I also applied 2 small pieces of double sided tape to hold the BLE module and th
 Final look:
 
 ![Final product](docs/anymotuino_final.jpg)
+
+Don't forget, you can also find the Fritzing schematic [here](fritzing/Anymotuino.fzz).
 
 Installing the Arduino Sketch and usage
 =======================================
