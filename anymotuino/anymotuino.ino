@@ -127,12 +127,10 @@ void sendCode(prog_uint16_t code[], int count, int repeat) {
     repeat = 1;
   }
   
+  Serial.println(repeat);
+  
   for (int r = 0; r < repeat; r++) {
    
-    for (int i = 0; i < count; i++) {
-      code[i] = code[i] * 26; // we're sending everything at 38kHz (1/38000 = 26 ticks per micro second)
-    }
-    
     digitalWrite(13, HIGH);
    
     irsend.sendRaw(code, count, pendingCode.freq);
@@ -144,7 +142,7 @@ void sendCode(prog_uint16_t code[], int count, int repeat) {
     Serial.println();
 #endif
     
-    delay(30); // small delay between codes
+//    delay(10); // small delay between codes
     digitalWrite(13, LOW);
   }
 }
@@ -233,10 +231,10 @@ void loop() {
             if (pendingCode.firstByte != 0) {
               unsigned int num = (unsigned int)pendingCode.firstByte << 7;
               num += data;
-              pendingCode.code[pendingCode.len++] = num;
+              pendingCode.code[pendingCode.len++] = num * USECPERTICK;
               pendingCode.firstByte = 0;
             } else {
-              pendingCode.code[pendingCode.len++] = (unsigned int)data;
+              pendingCode.code[pendingCode.len++] = (unsigned int)data * USECPERTICK;
             }
           }
         } else {
@@ -248,7 +246,7 @@ void loop() {
           // 0 came in, acts as separator
           if (pendingCode.len % 2 != 0) {
             // add the last space if necessary
-            pendingCode.code[pendingCode.len++] = 200;
+            pendingCode.code[pendingCode.len++] = 100;
           }
           pendingCode.complete = true;
         } else {
