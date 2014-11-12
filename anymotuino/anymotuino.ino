@@ -55,7 +55,7 @@
 //  --- config ---
 
 // uncomment this to get debug info over the serial monitor
-//#define DEBUG_LOGS  
+#define DEBUG_LOGS  
 
 #define CODE_BUF_SIZE 200 // the IR code array buffer size
 #define FREQ_MULTIPLIER 250 // to save bandwidth, the freq is divided by this value when transmitted OTA
