@@ -44,10 +44,15 @@
  */
  
 #include <SPI.h>
-#include <boards.h>
+#include <Boards.h>
 
 #define USECPERTICK 26 // we're defining the microseconds per tick to work with 38KHz codes (the most used frequency) - a tick of 26us = 38KHz
 
+// IMPORTANT! You may get this error on compile on the latest Arduino IDE: error: 'TKD2' was not declared in this scope
+// The IRremote library is included in the RobotIRremote library shipped with the latest versions of the Arduino IDE
+// which causes a conflict (the included version of IRremote is pretty old). Until the Arduino IDE devs fix this
+// issue, you can get back to a successful build by deleting the RobotIRremote libary from the Arduino libraries folder,
+// then close and reopen the Arduino IDE and rebuild.
 #include <IRremote.h>
 #include <IRremoteInt.h>
 #include <SoftwareSerial.h>
@@ -122,7 +127,7 @@ void goToWaitingMode() {
 }
 
 // sends a code to the device via the IR output
-void sendCode(prog_uint16_t code[], int count, int repeat) {
+void sendCode(uint16_t code[], int count, int repeat) {
   if (repeat == 0) {
     repeat = 1;
   }
@@ -149,6 +154,8 @@ void sendCode(prog_uint16_t code[], int count, int repeat) {
 
 void writeCodeToBLE() {
   bt.print((char)(38000/FREQ_MULTIPLIER)); // send the frequency (divided by 250 as the standard imposes)
+  Serial.print((char)(38000/FREQ_MULTIPLIER));
+  Serial.print(",");
   for (int i = 0; i < results.rawlen; i++) {
     int val = results.rawbuf[i];
     if (val > 0x7f) {
@@ -159,11 +166,18 @@ void writeCodeToBLE() {
       c1 = ~c1 + 1;
       bt.print((char)c1);
       bt.print((char)c2);
+      Serial.print((int)c1);
+      Serial.print(",");
+      Serial.print((int)c2);
+      Serial.print(",");
     } else {
       bt.print((char)val);
+      Serial.print((int)val);
+      Serial.print(",");
     }
   }
   bt.print((char)0);
+  Serial.print((int)0);
 #ifdef DEBUG_LOGS
   Serial.println("sent code to requester");
 #endif
