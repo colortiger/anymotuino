@@ -101,6 +101,8 @@ Sketch Installation And Configuration
 
 You first need to install the [IRRemote](https://github.com/shirriff/Arduino-IRremote) library in your Arduino SDK's libraries folder. 
 
+__Important:__ _You may get this error on compile on the latest Arduino IDE: `error: 'TKD2' was not declared in this scope`. The IRremote library is included in the RobotIRremote library shipped with the latest versions of the Arduino IDE which causes a conflict (the included version of IRremote is pretty old). Until the Arduino IDE devs fix this issue, you can get back to a successful build by deleting the RobotIRremote libary from the Arduino libraries folder, then close and reopen the Arduino IDE and rebuild._
+
 __Important:__ _If you want to use the IR Recording feature, you have to make a small adjustment in the `IRRemote.h` file of the IRRemote library before opening the Arduino IDE:_
 
 Replace this line:
