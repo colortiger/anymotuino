@@ -1,16 +1,16 @@
 /*
  File: anymotuino.ino
  Abstract: Open Source code of the Arduino Anymote code
- 
+
  Version: 1.0
- 
+
  Disclaimer: IMPORTANT:  This Color Tiger software is supplied to you by Color Tiger
  Inc. ("Color Tiger") in consideration of your agreement to the following
  terms, and your use, installation, modification or redistribution of
  this Color Tiger software constitutes acceptance of these terms.  If you do
  not agree with these terms, please do not use, install, modify or
  redistribute this Color Tiger software.
- 
+
  In consideration of your agreement to abide by the following terms, and
  subject to these terms, Color Tiger grants you a personal, non-exclusive
  license, under Color Tiger's copyrights in this original Color Tiger software (the
@@ -26,13 +26,13 @@
  implied, are granted by Color Tiger herein, including but not limited to any
  patent rights that may be infringed by your derivative works or by other
  works in which the Color Tiger Software may be incorporated.
- 
+
  The Software is provided by Color Tiger on an "AS IS" basis.  COLOR TIGER
  MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
  THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
  FOR A PARTICULAR PURPOSE, REGARDING THE COLOR TIGER SOFTWARE OR ITS USE AND
  OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- 
+
  IN NO EVENT SHALL COLOR TIGER BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
  OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -42,7 +42,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF COLOR TIGER HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include <SPI.h>
 #include <Boards.h>
 
@@ -60,7 +60,7 @@
 //  --- config ---
 
 // uncomment this to get debug info over the serial monitor
-#define DEBUG_LOGS  
+//#define DEBUG_LOGS
 
 #define CODE_BUF_SIZE 200 // the IR code array buffer size
 #define FREQ_MULTIPLIER 250 // to save bandwidth, the freq is divided by this value when transmitted OTA
@@ -113,7 +113,7 @@ void resetPendingCode() {
 void goToWaitingMode() {
   mode = MODE_WAITING;
   resetPendingCode();
-  
+
   cli();
   TIMER_CONFIG_NORMAL();
 
@@ -127,17 +127,17 @@ void goToWaitingMode() {
 }
 
 // sends a code to the device via the IR output
-void sendCode(uint16_t code[], int count, int repeat) {
+void sendCode(unsigned int code[], int count, int repeat) {
   if (repeat == 0) {
     repeat = 1;
   }
-  
+
   Serial.println(repeat);
-  
+
   for (int r = 0; r < repeat; r++) {
-   
+
     digitalWrite(13, HIGH);
-   
+
     irsend.sendRaw(code, count, pendingCode.freq);
 
 #ifdef DEBUG_LOGS
@@ -146,15 +146,15 @@ void sendCode(uint16_t code[], int count, int repeat) {
     Serial.print(" raw codes");
     Serial.println();
 #endif
-    
-//    delay(10); // small delay between codes
+
+    //    delay(10); // small delay between codes
     digitalWrite(13, LOW);
   }
 }
 
 void writeCodeToBLE() {
-  bt.print((char)(38000/FREQ_MULTIPLIER)); // send the frequency (divided by 250 as the standard imposes)
-  Serial.print((char)(38000/FREQ_MULTIPLIER));
+  bt.print((char)(38000 / FREQ_MULTIPLIER)); // send the frequency (divided by 250 as the standard imposes)
+  Serial.print((char)(38000 / FREQ_MULTIPLIER));
   Serial.print(",");
   for (int i = 0; i < results.rawlen; i++) {
     int val = results.rawbuf[i];
@@ -193,9 +193,9 @@ void setup() {
   Serial.begin(57600);
 
   bt.begin(9600);
-  
+
   resetPendingCode();
-  
+
   mode = MODE_WAITING;
 
 #ifdef DEBUG_LOGS
@@ -219,17 +219,17 @@ void loop() {
     mode = MODE_WAITING;
     resetPendingCode();
   }
-  
-//  digitalWrite(13, LOW);
-    
+
+  //  digitalWrite(13, LOW);
+
   if (MODE_SEND == mode) {
     // read more bytes from the stream
     if (bt.available() > 0) {
       int data = bt.read();
-      
+
       if (pendingCode.freq == 0) {
         // frequency time
-        pendingCode.freq = data * FREQ_MULTIPLIER/1000; // transform it to kHz
+        pendingCode.freq = data * FREQ_MULTIPLIER / 1000; // transform it to kHz
 #ifdef DEBUG_LOGS
         Serial.print("freq=");
         Serial.println(pendingCode.freq);
@@ -242,13 +242,14 @@ void loop() {
             // first part of a multi-byte int
             pendingCode.firstByte = 256 - data; // convert it back to positive
           } else {
+            int usecpertick = 1000/pendingCode.freq;
             if (pendingCode.firstByte != 0) {
               unsigned int num = (unsigned int)pendingCode.firstByte << 7;
               num += data;
-              pendingCode.code[pendingCode.len++] = num * USECPERTICK;
+              pendingCode.code[pendingCode.len++] = num * usecpertick;
               pendingCode.firstByte = 0;
             } else {
-              pendingCode.code[pendingCode.len++] = (unsigned int)data * USECPERTICK;
+              pendingCode.code[pendingCode.len++] = (unsigned int)data * usecpertick;
             }
           }
         } else {
@@ -268,7 +269,7 @@ void loop() {
           pendingCode.repeat = 1;
         }
       }
-      
+
       if (pendingCode.complete && pendingCode.repeat > 0) {
         // get out of this mode
         mode = MODE_TRANSMIT;
@@ -280,11 +281,11 @@ void loop() {
   else if (MODE_TRANSMIT == mode)  {
     // got a code waiting to be sent via ir, take care of it now
     sendCode(pendingCode.code, pendingCode.len, pendingCode.repeat);
-    
+
     // reset the pending code
     goToWaitingMode();
   } else if (MODE_RECORD == mode) {
-    
+
     if (irrecv.decode(&results)) {
       // get into code return mode to make sure nothing stands in our way
       mode = MODE_RETURN;
@@ -296,13 +297,13 @@ void loop() {
 
       // pass it along and be done with it
       writeCodeToBLE();
-      
+
       irrecv.resume(); // resume
 
       // return to idle
       goToWaitingMode();
     }
-    
+
     if (bt.available()) {
 #ifdef DEBUG_LOGS
       Serial.println("Command received while in record mode, cancelling...");
@@ -313,10 +314,10 @@ void loop() {
     }
 
   } else if (MODE_WAITING == mode) {
-    
+
     // waiting
     digitalWrite(13, HIGH);
-    
+
     if (bt.available() > 0) {
       // a command came in, handle it
       unsigned int command = (unsigned int)bt.read();
@@ -332,7 +333,7 @@ void loop() {
         irrecv.enableIRIn(); // Re-enable receiver
       }
     }
-    
-  } 
- 
+
+  }
+
 }
