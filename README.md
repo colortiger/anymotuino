@@ -1,3 +1,7 @@
+Warning: this project has been discontinued
+==========
+Although the arduino DYI hardware still works, the pairing application (the AnyMote app) won't discover it as a valid AnyMote device. This is because none of the available BLE modules for Arduino allow for custom discovery data, which would make the overall connection & discovery of both AnyMote and Arduino DYI Anymotuinos significantly slower (10x slower)
+
 anymotuino
 ==========
 
